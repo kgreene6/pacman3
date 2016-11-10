@@ -1,0 +1,336 @@
+<!doctype html>
+<html>
+<head>
+<title> Pacman Part 3</title>
+</head>
+<style> 
+    #stage {
+        position: relative;
+    }
+    
+    canvas {
+        position: absolute;
+    }
+    
+</style>
+
+<body>
+<div id="stage"><canvas width="300" height="300" style="border:1px solid black"></canvas></div>
+
+</body>
+
+<script>
+var ghost = {
+    IMAGE: "ghost-pacman2.png",
+    SIZE: 30,
+    
+    numberOfFrames: 10,
+    currentFrames: 0,
+    
+    sourceX: 0,
+    sourceY: 0,
+    sourceWidth: 30,
+    sourceHeight: 30,
+    
+    x: 100,
+    y: 100,
+    width: 30,
+    height: 30,
+    
+    updateAnimation: function() {
+        this.sourceX = this.currentFrame * this.SIZE;
+        this.sourceY = 0;
+        
+        if(this.currentFrame < this.numberOfFrames) {
+            this.currentFrame++;
+        } else if(this.currentFrame = this.numberOfFrames) {
+            this.currentFrame = 0;
+        }
+    },
+    
+    left: function() {
+    return this.x;
+    },
+
+    right: function() {
+    return this.x + this.width;
+    },
+    
+    top: function() {
+    return this.y;
+    },
+    
+    bottom: function() {
+    return this.y + this.height;
+    },
+    
+    centerX: function() {
+        return this.x + 12;
+    },
+    
+    centerY: function() {
+        return this.y + 13;
+    },
+    
+    halfWidth: 12,
+    halfHeight: 13
+    
+}
+
+//var ghost2 = {
+   // IMAGE: "ghost-pacman2.png",
+    //SIZE: 30,
+    
+    //numberOfFrames: 10,
+    //currentFrames: 0,
+    
+    //sourceX: 0,
+    //sourceY: 0,
+    //sourceWidth: 30,
+    //sourceHeight: 30,
+    
+    //x: 150,
+    //y: 150,
+    //width: 30,
+    //height: 30,
+    
+    //updateAnimation: function() {
+        //this.sourceX = this.currentFrame * this.SIZE;
+        //this.sourceY = 0;
+        
+        //if(this.currentFrame < this.numberOfFrames) {
+           // this.currentFrame++;
+        //} else if(this.currentFrame = this.numberOfFrames) {
+           // this.currentFrame = 0;
+       // }
+    //},
+    
+    //left: function() {
+    //return this.x;
+    //},
+
+    //right: function() {
+    //return this.x + this.width;
+   // },
+    
+   // top: function() {
+    //return this.y;
+    //},
+    
+    //bottom: function() {
+   // return this.y + this.height;
+    //},
+    
+   // centerX: function() {
+      //  return this.x + 12;
+  //  },
+    
+    //centerY: function() {
+      //  return this.y + 13;
+   //},
+    
+    //halfWidth: 12,
+    //halfHeight: 13
+    
+//}
+
+
+var pacman = {
+    SIZE: 30,
+    
+    numberOfFrames: 3,
+    currentFrames: 0,
+    
+    sourceX: 330,
+    sourceY: 0,
+    sourceWidth: 30,
+    sourceHeight: 30,
+    
+    x: 200,
+    y: 200,
+    width: 30,
+    height: 30,
+    
+    updateAnimation: function() {
+        this.sourceX = this.currentFrame * this.SIZE + 330;
+        this.sourceY = 0;
+        
+        if(this.currentFrame < this.numberOfFrames) {
+            this.currentFrame++;
+        } else if(this.currentFrame = this.numberOfFrames) {
+            this.currentFrame = 0;
+        }
+    },
+    
+    left: function() {
+    return this.x;
+    },
+
+    right: function() {
+    return this.x + this.width;
+    },
+    
+    top: function() {
+    return this.y;
+    },
+    
+    bottom: function() {
+    return this.y + this.height;
+    },
+    
+    centerX: function() {
+        return this.x + 11;
+    },
+    
+    centerY: function() {
+        return this.y + 11;
+    },
+    
+    halfWidth: 11,
+    halfHeight: 11
+}
+    
+var myCanvas = document.querySelector("canvas"); 
+var drawingSurface = myCanvas.getContext("2d");
+
+var image = new Image();
+image.src = "./ghost-pacman2.png";
+
+var ghost01 = Object.create(ghost);
+//pacmanpt3var ghost02 = Object.create(ghost2);
+var pacman01 = Object.create(pacman);
+
+var gx = 100;
+var gy = 100;
+
+image.addEventListener("load", loadHandler, false);
+    
+function loadHandler(){
+    
+    drawingSurface.drawImage(image, 
+                            330, 0, 30, 30, 
+                            pacman01.x, pacman01.y, 30, 30);
+
+    animateGhost();
+}
+
+function animateGhost() {
+    setTimeout(animateGhost, 400);
+
+    if (ghost01.x <= myCanvas.width) {
+        ghost01.x += 5;
+    } else {
+        ghost01.x = 0;
+    }
+    
+    if(!hitTest(ghost01, pacman01)) {
+        ghost01.updateAnimation();
+
+    } else {
+        ghost01.x -= 5;
+        // ghost01.updateAnimation();
+        pacman01.updateAnimation();
+    }
+    render();
+}
+  
+window.addEventListener("keydown", keyDownHandler, false);
+    
+    var UP = 38;
+    var DOWN = 40;
+    var RIGHT = 39;
+    var LEFT = 37;
+    
+function keyDownHandler(event) {
+    switch(event.keyCode) {
+            case UP:
+                pacman.y -= 5;
+                break;
+            
+            case DOWN:
+                pacman.y += 5;
+                break;
+            
+            case LEFT:
+                pacman.x -= 5;    
+                break;
+                
+            case RIGHT:
+                pacman.x += 5;
+                break;
+                
+        }
+    if(!hitTest(ghost01, pacman01)) {
+        ghost01.updateAnimation();
+    } else {
+        ghost01.x -= 5;
+        pacman01.updateAnimation();
+    }
+    //render();
+    window.requestAnimationFrame(render, myCanvas);
+}
+    
+function render() {
+            drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);    
+            drawingSurface.drawImage(image, 
+                            pacman01.sourceX, pacman01.sourceY, 30, 30, 
+                            pacman.x, pacman.y, 30, 30);
+    
+            drawingSurface.drawImage(image, 
+                            ghost01.sourceX, ghost01.sourceY, 30, 30, 
+                            ghost01.x, ghost01.y, 30, 30);
+}
+    
+window.addEventListener("mousedown", mousedownHandler, false);
+
+function mousedownHandler(event) {
+var mouseX = event.pageX - 10;
+var mouseY = event.pageY - 10;
+
+console.log(mouseX, mouseY);
+
+hitTestPoint(mouseX, mouseY, ghost01);
+}
+    
+function hitTestPoint (pointX, pointY, ghost) {
+    var hit = false;
+    
+
+    if((pointX > ghost.left()) && (pointX < ghost.right())) {
+        if ((pointY > ghost.top()) && (pointY < ghost.bottom())) {
+        hit = true;
+        
+        console.log(ghost.x, ghost.y);
+        console.log("I got you!");
+    }
+    }
+    
+    return hit;
+}
+
+    
+function hitTest (ghost, pacman) {
+    var hit = false;
+    
+    var dx = ghost.centerX() - pacman.centerX();
+    var dy = ghost.centerY() - pacman.centerY();
+    
+    var combinedHalfWidths = 23; // 11 + 12
+    var combinedHalfHeights = 24; // 11 + 13
+    
+    if (Math.abs(dx) < combinedHalfWidths) {
+        if(Math.abs(dy) < combinedHalfHeights) {
+            hit = true;
+        }else {
+            hit = false;
+        }
+    } else {
+        hit = false;
+    }
+    
+    return hit;
+}
+    
+
+    
+</script>
